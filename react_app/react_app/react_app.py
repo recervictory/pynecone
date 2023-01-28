@@ -8,34 +8,36 @@ filename = f"{config.app_name}/{config.app_name}.py"
 
 
 class State(pc.State):
-    """The app state."""
-
-    pass
-
+    colors = ["black", "red", "green", "blue", "purple"]
+    index = 0
+    
+    def next_color(self):
+        self.index = (self.index + 1) % len(self.colors)
+    
+    #Todo: Computed vars: Computed properties are properties that are computed from other properties. 
+    @pc.var
+    def color(self):
+        return self.colors[self.index]
 
 def index():
     return pc.center(
         pc.vstack(
-            pc.heading("Welcome to Pynecone!", font_size="2em"),
-            pc.box("Get started by editing ", pc.code(filename, font_size="1em")),
-            pc.link(
-                "Check out our docs!",
-                href=docs_url,
-                border="0.1em solid",
-                padding="0.5em",
-                border_radius="0.5em",
-                _hover={
-                    "color": "rgb(107,99,246)",
-                },
-            ),
-            spacing="1.5em",
-            font_size="2em",
+            pc.heading("Welcome to Pynecone!", 
+                       font_size="2em",
+                       on_click= State.next_color,
+                       color=State.color,
+                       _hover={"cursor": "pointer"}
+                       ),  
         ),
-        padding_top="10%",
     )
+
+def about():
+    return pc.text('About Page')
+
 
 
 # Add state and page to the app.
 app = pc.App(state=State)
 app.add_page(index)
+app.add_page(about)
 app.compile()
